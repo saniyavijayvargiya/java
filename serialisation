@@ -1,0 +1,59 @@
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
+class Person implements Serializable {
+    int id;
+    String name;
+    Person(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+}
+
+class Student extends Person {
+    int marks;
+    String subject;
+
+    Student(int id, String name, int marks, String subject) {
+        super(id, name);
+        this.marks = marks;
+        this.subject = subject;
+    }  
+}
+
+public class App {
+    public static void main(String args[]) {
+        
+        try {
+            FileOutputStream fout = new FileOutputStream("records.txt");
+            ObjectOutputStream out = new ObjectOutputStream(fout);
+            Student s1 = new Student(111, "max", 94, "math");
+            Student s2 = new Student(112, "alex", 78, "english");
+            out.writeObject(s1);
+            out.writeObject(s2);
+            out.flush();
+            out.close();
+            System.out.println("records written");
+        } catch (Exception exc) {
+            System.out.println("error occurred");
+        }
+
+
+        try {
+            FileInputStream fin = new FileInputStream("records.txt");
+            ObjectInputStream in = new ObjectInputStream(fin);
+
+            Student s1 = (Student) in.readObject();
+            System.out.println(s1.id + " " + s1.name + " " + s1.marks + " " + s1.subject);
+            Student s2 = (Student) in.readObject();
+            System.out.println(s2.id + " " + s2.name + " " + s2.marks + " " + s2.subject);
+            in.close();
+
+        } catch (Exception exc) {
+            System.out.println("error occurred");
+        }
+    }
+}
