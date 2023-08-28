@@ -1,0 +1,271 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.InputMismatchException;
+import java.util.Scanner;
+import java.util.Collections;
+import java.util.Comparator;
+
+
+class Employee {
+    String name, email;
+    int age;
+    Date dob = new Date(); 
+
+    Employee(String name, String email, int age, Date dob) {
+        this.name = name;
+        this.email = email;
+        this.age = age;
+        this.dob = dob;
+    }
+
+    String getName() {
+        return this.name;
+    }
+}
+
+public class App {
+    static ArrayList<Employee> list = new ArrayList<>();
+    static Scanner sc = new Scanner(System.in);
+
+
+    static void loadEmployees() {                                                                                      //read all objects from file into an arraylist
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("employees.txt"));
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                String[] arr = line.split(", ");
+                String name = arr[0];
+                String email = arr[1];
+                int age = Integer.parseInt(arr[2]);
+                Date dob = new SimpleDateFormat("dd-MM-yyyy").parse(arr[3]);
+
+                Employee obj = new Employee(name, email, age, dob);
+                list.add(obj);
+            }
+            reader.close();
+
+        } catch (Exception exc) {
+            return;
+        }
+    }
+
+
+    static void addEmployee() {
+       
+        sc.nextLine();
+        System.out.print("enter employee name: ");
+        String name = sc.nextLine();
+    
+        System.out.print("enter email address: ");
+        String email = sc.nextLine();
+
+        System.out.print("enter employee age: ");
+        int age = sc.nextInt();
+
+        System.out.print("enter date of birth (dd-mm-yyyy format): ");
+        String date = sc.next();
+
+        Date dob = null;
+        try {
+            dob = new SimpleDateFormat("dd-MM-yyyy").parse(date);
+        } catch (ParseException exc) {
+            System.out.println("invalid input");
+            return;
+        }
+
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("employees.txt", true));                              //open file in append mode to add new records
+
+            String line = name + ", " + email + ", " + age + ", " + date + "\n";
+            writer.write(line);
+            writer.close();
+
+        } catch (Exception exc) {
+            return;
+        }
+
+        Employee obj = new Employee(name, email, age, dob);
+        list.add(obj);
+        System.out.println("employee added successfully");
+    }
+
+
+    static void deleteEmployee() {
+        sc.nextLine();
+        System.out.print("enter email address of the employee to delete: ");                                             //delete employees by email as it is unique field
+        String emailaddr = sc.nextLine();
+        int flag = 0;
+
+        for (Employee obj : list) {
+            if (obj.email.equals(emailaddr)) {
+                list.remove(obj);
+                flag = 1;
+                break;
+            }
+        }
+
+        if (flag == 1) {
+            System.out.println("employee record deleted successfully");
+        } else {
+            System.out.println("no matching record found");
+        }
+
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("employees.txt"));                                 //open file in write mode so all records rewritten 
+            for (Employee obj : list) {
+                String date = new SimpleDateFormat("yyyy-MM-dd").format(obj.dob);
+                String line = obj.name + ", " + obj.email + ", " + obj.age + ", " + date + "\n";
+                writer.write(line);
+            }
+            writer.close();
+        } catch (Exception exc) {
+            return;
+        }
+    }
+
+
+    static void searchEmployee() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+
+        int choice;
+        System.out.println("enter 1 if you want to find an employee by particular field");
+        System.out.println("enter 2 to display all employees in particular order");
+        choice = sc.nextInt();
+
+        if (choice == 1) {
+            int field;
+            System.out.println("1) search record by name");
+            System.out.println("2) search record by email");
+            System.out.println("3) search record by DOB");
+            System.out.print("enter option number: ");
+            field = sc.nextInt();
+            sc.nextLine();
+            int flag = 0;
+
+            if (field == 1) {
+                System.out.print("enter name to be searched: ");
+                String searchName = sc.nextLine();
+                
+                for (Employee obj : list) {
+                    if (obj.name.equals(searchName)) {
+                        System.out.println(obj.name + ", " + obj.email + ", " + obj.age + ", " + formatter.format(obj.dob));
+                        flag = 1;
+                        break;
+                    }
+                }
+                if (flag == 0) {
+                    System.out.println("no matching record found");
+                }
+            }
+            else if (field == 2) {
+                System.out.print("enter email to be searched: ");
+                String searchEmail = sc.nextLine();
+                
+                for (Employee obj : list) {
+                    if (obj.email.equals(searchEmail)) {
+                        System.out.println(obj.name + ", " + obj.email + ", " + obj.age + ", " + formatter.format(obj.dob));
+                        flag = 1;
+                        break;
+                    }
+                }
+                if (flag == 0) {
+                    System.out.println("no matching record found");
+                }
+            }
+            else if (field == 3) {
+                System.out.print("enter date to be searched: ");
+                String date = sc.nextLine();
+                try {
+                    Date searchDate = new SimpleDateFormat("dd-MM-yyyy").parse(date);                                               //convert string to Date for comparison
+                   
+                    for (Employee obj : list) {
+                        if (obj.dob.equals(searchDate)) {
+                            System.out.println(obj.name + ", " + obj.email + ", " + obj.age + ", " + formatter.format(obj.dob));
+                            flag = 1;
+                        }
+                    }
+                    if (flag == 0) {
+                        System.out.println("no matching record found");
+                    }
+                } catch (Exception exc) {
+                    System.out.println("invalid date entered");
+                }                
+            }
+            else {
+                System.out.println("invalid choice");
+            }
+
+        } else if (choice == 2) {
+            int order;
+            System.out.println("enter 1 to display in ascending, 2 for descending order");
+            order = sc.nextInt();
+
+            if (order == 1) {
+                list.sort(Comparator.comparing(Employee::getName));                                                            //display in ascending order
+
+                for (Employee obj : list) {
+                    System.out.println(obj.name + ", " + obj.email + ", " + obj.age + ", " + formatter.format(obj.dob));
+                }
+                
+            } 
+            else if (order == 2) {
+                Collections.sort(list, Comparator.comparing(Employee::getName).reversed());                                    //display in descending order
+
+                for (Employee obj : list) {
+                    System.out.println(obj.name + ", " + obj.email + ", " + obj.age + ", " + formatter.format(obj.dob));
+                }
+            }
+            else {
+                System.out.println("invalid choice");
+            }
+        } else {
+            System.out.println("invalid choice");
+        }
+    }
+
+
+    public static void main(String args[]) {
+
+        loadEmployees();
+
+        System.out.println("1) add employee");
+        System.out.println("2) delete employee");
+        System.out.println("3) search employee");
+       
+        int option;
+        int cont = 1;
+
+        do {
+            try {
+                System.out.print("enter your option number: ");
+                option = sc.nextInt();
+
+                if (option == 1) {
+                    addEmployee();
+                }
+                else if (option == 2) {
+                    deleteEmployee();
+                }
+                else if (option == 3) {
+                    searchEmployee();
+                } 
+                else {
+                    System.out.println("please enter option numbers from the menu provided only");
+                }
+            } catch (InputMismatchException exc) {
+                System.out.println("invalid input");
+            }
+
+            System.out.print("press 1 to continue or any other number to exit the program: ");
+            cont = sc.nextInt();
+
+        } while (cont == 1);                                                                                    //continue the loop till user does not exit
+    }
+}
