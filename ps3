@@ -200,7 +200,7 @@ public class App {
                 }                
             }
             else {
-                System.out.println(Invalid choice.");
+                System.out.println("Invalid choice.");
             }
 
         } else if (choice == 2) {
