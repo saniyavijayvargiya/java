@@ -1,0 +1,50 @@
+import java.util.*;
+
+public class App {
+    public static void main(String args[]) {
+        HashMap<Integer, String> map = new HashMap<>();
+
+
+        // INSERTING VALUES IN HASHMAP
+
+        map.put(1, "max");
+        map.put(2, "alex");
+        map.put(3, "ross");
+        System.out.println(map);
+        
+
+        //CHECKING IF MAP CONATINS GIVEN VALUE
+
+        if (map.containsKey(1)) {
+            System.out.println("key exists");
+        } else {
+            System.out.println("key doesn't exist");
+        }
+
+
+        //RETRIEVING VALUE OF GIVEN KEY
+
+        System.out.println(map.get(2));
+        System.out.println(map.get(3));
+
+
+        //PRINTING KEY-VALUE PAIRS
+        
+        for (Map.Entry<Integer, String> entry : map.entrySet()) {
+            System.out.println(entry.getKey() + " " + entry.getValue());
+        }
+
+        //OR
+
+        // Set<Integer> set = map.keySet();
+        // for (int key : set) {
+        //     System.out.println(key + " " + map.get(key));
+        // }
+
+
+        //DELETING VALUES FROM MAP
+
+        map.remove(2);
+        System.out.println(map);
+    }
+}

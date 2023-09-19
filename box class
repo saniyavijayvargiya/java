@@ -1,0 +1,57 @@
+class Box {
+    public float width, height, depth;
+
+    {
+        System.out.println("initialiser block");   // prints 3 times because 3 objects created 
+    }
+
+    Box() {    // default constructor
+        width = 10;
+        height = 20;
+        depth = 30;
+    }
+
+    Box(float w, float h, float d) {
+        width = w;
+        height = h;
+        depth = d;
+    }
+
+    Box(Box obj) {
+        width = obj.width;
+        height= obj.height;
+        depth = obj.depth;
+    }
+
+    float volume() {
+        return width * height * depth;
+    }
+
+    Box incr() {
+        Box temp = new Box(width+10, height+20, depth+30);
+        return temp;    // returning an object from a method
+    }
+}
+
+public class App {
+
+    static void stat() {
+        System.out.println("this is a static method");
+    }
+    public static void main(String[] args) {
+        Box obj1 = new Box();
+        Box obj2 = new Box(40, 50, 60);
+        Box obj3 = new Box(obj2);   // cloning an object
+        System.out.println(obj1.volume());
+        System.out.println(obj2.volume());
+        System.out.println(obj3.volume());
+
+        Box obj4;
+        obj4 = obj1.incr();    // object returned from a method
+        System.out.println(obj4.width);
+        System.out.println(obj4.height);
+        System.out.println(obj4.depth);
+
+        stat();    // since main is static, it can only call a static method
+    }
+}
